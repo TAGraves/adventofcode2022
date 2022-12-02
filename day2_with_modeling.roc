@@ -1,21 +1,7 @@
-app "day1"
+app "day2_with_modeling"
     packages { pf: "https://github.com/roc-lang/basic-cli/releases/download/0.1.1/zAoiC9xtQPHywYk350_b7ust04BmWLW00sjb9ZPtSQk.tar.br" }
-    imports [pf.File, pf.Stdout, pf.Task, pf.Path]
+    imports [pf.Stdout, pf.Task, Util]
     provides [main] to pf
-
-unwrap = \result, errMsg ->
-    when result is
-        Ok a -> a
-        Err _ -> crash (Str.concat "Unwrap failed" errMsg)
-
-readFile = \filePath ->
-    task =
-        File.readUtf8 (Path.fromStr filePath)
-
-    Task.attempt task \result ->
-        when result is
-            Err _ -> crash "Error reading file"
-            Ok content -> Task.succeed content
 
 sumRounds = \fileContents, fn ->
     Str.split fileContents "\n"
@@ -52,6 +38,7 @@ getScore = \ourMove, outcome ->
         Lose -> 0
         Draw -> 3
         Win -> 6
+
     moveScore + outcomeScore
 
 mapTheirMove = \theirMove ->
@@ -75,18 +62,18 @@ mapOutcome = \outcome ->
 
 partOne = \fileContents ->
     sumRounds fileContents \round ->
-        moves = Str.split round " "
-        theirMove = mapTheirMove (unwrap (List.first moves) "no first element in moves")
-        ourMove = mapOurMove (unwrap (List.get moves 1) "no second element in moves")
+        (Tuple theirMoveRaw ourMoveRaw) = Str.split round " " |> Util.makeTuple
+        theirMove = mapTheirMove theirMoveRaw
+        ourMove = mapOurMove ourMoveRaw
         outcome = getOutcome ourMove theirMove
 
         getScore ourMove outcome
 
 partTwo = \fileContents ->
     sumRounds fileContents \round ->
-        inputs = Str.split round " "
-        theirMove = mapTheirMove (unwrap (List.first inputs) "no first element in inputs")
-        outcome = mapOutcome (unwrap (List.get inputs 1) "no second element in inputs")
+        (Tuple theirMoveRaw outcomeRaw) = Str.split round " " |> Util.makeTuple
+        theirMove = mapTheirMove theirMoveRaw
+        outcome = mapOutcome outcomeRaw
         ourMove = when outcome is
             Lose -> getWinningMatchupFor theirMove
             Draw -> theirMove
@@ -95,7 +82,7 @@ partTwo = \fileContents ->
         getScore ourMove outcome
 
 main =
-    fileContents <- readFile "./day2.txt" |> Task.await
+    fileContents <- Util.readFile "./day2.txt" |> Task.await
     Stdout.write
         (
             Str.joinWith

@@ -1,17 +1,7 @@
-app "day1"
+app "day2"
     packages { pf: "https://github.com/roc-lang/basic-cli/releases/download/0.1.1/zAoiC9xtQPHywYk350_b7ust04BmWLW00sjb9ZPtSQk.tar.br" }
-    imports [pf.File, pf.Stdout, pf.Task, pf.Path]
+    imports [pf.Stdout, pf.Task, Util]
     provides [main] to pf
-
-
-readFile = \filePath ->
-    task =
-        File.readUtf8 (Path.fromStr filePath)
-
-    Task.attempt task \result ->
-        when result is
-            Err _ -> crash "Error reading file"
-            Ok content -> Task.succeed content
 
 partOne = \fileContents ->
     Str.split fileContents "\n"
@@ -48,7 +38,7 @@ partTwo = \fileContents ->
     |> Num.toStr
 
 main =
-    fileContents <- readFile "./day2.txt" |> Task.await
+    fileContents <- Util.readFile "./day2.txt" |> Task.await
     Stdout.write
         (
             Str.joinWith
