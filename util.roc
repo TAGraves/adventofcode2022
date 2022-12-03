@@ -1,5 +1,5 @@
 interface Util
-    exposes [readFile, unwrap, makeTuple]
+    exposes [readFile, unwrap, makeTuple, makeTuple3]
     imports [pf.Task, pf.File, pf.Path]
 
 unwrap = \result, errMsg ->
@@ -24,3 +24,13 @@ makeTuple = \list ->
         Tuple first second
     else
         crash (Str.concat "Tuple could not be made out of list: " (listToStr list))
+
+makeTuple3 = \list ->
+    if List.len list == 3 then
+        first = List.first list |> unwrap ""
+        second = List.get list 1 |> unwrap ""
+        third = List.get list 2 |> unwrap ""
+
+        Tuple3 first second third
+    else
+        crash "Tuple3 could not be made out of list"
