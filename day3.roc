@@ -43,7 +43,8 @@ partTwo = \fileContents ->
             }
     |> .groups
     |> List.map \group ->
-        Tuple3 firstGroup secondGroup thirdGroup = Util.makeTuple3 group
+        (Tuple3 firstGroup secondGroup thirdGroup) = Util.makeTuple3 group
+
         List.keepIf firstGroup \item -> List.contains secondGroup item && List.contains thirdGroup item
         |> List.first
         |> Util.unwrap "no shared item in group"

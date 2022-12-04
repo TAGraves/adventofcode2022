@@ -23,7 +23,7 @@ makeTuple = \list ->
 
         Tuple first second
     else
-        crash (Str.concat "Tuple could not be made out of list: " (listToStr list))
+        crash "Tuple could not be made out of list"
 
 makeTuple3 = \list ->
     if List.len list == 3 then
